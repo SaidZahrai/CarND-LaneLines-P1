@@ -1,56 +1,48 @@
+** This is a lab in Udacity Nanodegree for Self-driving car, forked from [CarND-LaneLines-P1](https://github.com/udacity/CarND-LaneLines-P1) at Github.
+
 # **Finding Lane Lines on the Road** 
 [![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
 
-<img src="examples/laneLines_thirdPass.jpg" width="480" alt="Combined Image" />
 
-Overview
----
+### 1. Description of my pipeline. 
 
-When we drive, we use our eyes to decide where to go.  The lines on the road that show us where the lanes are act as our constant reference for where to steer the vehicle.  Naturally, one of the first things we would like to do in developing a self-driving car is to automatically detect lane lines using an algorithm.
+My pipeline consisted of 5 steps:
+1. Converted the images to grayscale
+2. Blur the image
+3. Find edges
+4. Mask the region of interest
+5. Use Hough transform to find lines in the image
 
-In this project you will detect lane lines in images using Python and OpenCV.  OpenCV means "Open-Source Computer Vision", which is a package that has many useful tools for analyzing images.  
+The pipeline worked after some parameter tuning.
 
-To complete the project, two files will be submitted: a file containing project code and a file containing a brief write up explaining your solution. We have included template files to be used both for the [code](https://github.com/udacity/CarND-LaneLines-P1/blob/master/P1.ipynb) and the [writeup](https://github.com/udacity/CarND-LaneLines-P1/blob/master/writeup_template.md).The code file is called P1.ipynb and the writeup template is writeup_template.md 
-
-To meet specifications in the project, take a look at the requirements in the [project rubric](https://review.udacity.com/#!/rubrics/322/view)
-
-
-Creating a Great Writeup
----
-For this project, a great writeup should provide a detailed response to the "Reflection" section of the [project rubric](https://review.udacity.com/#!/rubrics/322/view). There are three parts to the reflection:
-
-1. Describe the pipeline
-
-2. Identify any shortcomings
-
-3. Suggest possible improvements
-
-We encourage using images in your writeup to demonstrate how your pipeline works.  
-
-All that said, please be concise!  We're not looking for you to write a book here: just a brief description.
-
-You're not required to use markdown for your writeup.  If you use another method please just submit a pdf of your writeup. Here is a link to a [writeup template file](https://github.com/udacity/CarND-LaneLines-P1/blob/master/writeup_template.md). 
+To interpolate/extrapolate the found lines, I modified draw_lines in the following way:
+1. Assume that all the discovered lines can be classified into two classes, one with positive slope and one with negative slope.
+2. For each found line, calculate the slope and classify the line based on that.
+3. For each class, positive and negative slopes, calculate the middle point of the found line.
+4. For each class average the middle point coordinates and the value of the slope.
+5. For each class, use the averaged coordinate of the middle points as one point on the line and the average slope and draw a line that goes from the lowest edge to the end of the region of interest.
+This is working for most of the images, but for some, the average slope was not correctly representing the desired lane line. I solved this problem with an extra step of filtering the lines by looking at their slopes and accepting only those that have a value withing the acceptable range.
 
 
-The Project
----
+### 2. Potential shortcomings with the current pipeline
 
-## If you have already installed the [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md) you should be good to go!   If not, you should install the starter kit to get started on this project. ##
+There are several potential shortcomings and the algorithm is a relatively simple one. Some of those are below ones:
+1. The parameters need to be tuned based on actual conditions and quality of the lane lines. 
+2. The lighting conditions have likely a strong impact.
+3. Weather conditions will change the view and make the algorthm to break down.
+4. Shadows and reflections will cause problems.
+5. Surface damages of the road will be found as lines.  
 
-**Step 1:** Set up the [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md) if you haven't already.
+### 3. Suggest possible improvements to your pipeline
 
-**Step 2:** Open the code in a Jupyter Notebook
+1. Look more specifically on the color of the found regions.
+2. Start with filtering of the input image and smooth out irregularities.
+3. Use the knowledge about direction of motion to filter out discovered lines that are not relevant.
+4. Correlate the information with the previously found information to eliminate outliers.
 
-You will complete the project code in a Jupyter notebook.  If you are unfamiliar with Jupyter Notebooks, check out [Udacity's free course on Anaconda and Jupyter Notebooks](https://classroom.udacity.com/courses/ud1111) to get started.
+### 4. Challenge problem
 
-Jupyter is an Ipython notebook where you can run blocks of code and see results interactively.  All the code for this project is contained in a Jupyter notebook. To start Jupyter in your browser, use terminal to navigate to your project directory and then run the following command at the terminal prompt (be sure you've activated your Python 3 carnd-term1 environment as described in the [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md) installation instructions!):
+I tried to find a solution to the final challenge. With the first solution, when many line segments are considered, the pipeline was finding many regions that were not related to the lane itself. The second method, with filtering the lines, was much more successful. Most of the time, it finds the lane lines. As the right lane line is missing markers in some regions, the right line is fluctuating a bit. This can of course be solved by time-correlation.   
 
-`> jupyter notebook`
 
-A browser window will appear showing the contents of the current directory.  Click on the file called "P1.ipynb".  Another browser window will appear displaying the notebook.  Follow the instructions in the notebook to complete the project.  
-
-**Step 3:** Complete the project and submit both the Ipython notebook and the project writeup
-
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
 
