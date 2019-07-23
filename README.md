@@ -1,4 +1,4 @@
-** This is a lab in Udacity Nanodegree for Self-driving car, forked from [CarND-LaneLines-P1](https://github.com/udacity/CarND-LaneLines-P1) at Github.
+** This is a lab in Udacity Nanodegree for Self-driving car, forked from [CarND-LaneLines-P1](https://github.com/udacity/CarND-LaneLines-P1) . **
 
 # **Finding Lane Lines on the Road** 
 [![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
@@ -43,6 +43,5 @@ There are several potential shortcomings and the algorithm is a relatively simpl
 ### 4. Challenge problem
 
 I tried to find a solution to the final challenge. With the first solution, when many line segments are considered, the pipeline was finding many regions that were not related to the lane itself. The second method, with filtering the lines, was much more successful. Most of the time, it finds the lane lines. As the right lane line is missing markers in some regions, the right line is fluctuating a bit. This can of course be solved by time-correlation.   
-
 
 
